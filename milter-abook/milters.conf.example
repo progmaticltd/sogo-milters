@@ -1,0 +1,9 @@
+# Sogo milters configuration
+[main]
+debug=True
+
+# This account should have read-only only to the tables in the SOGo database
+[postgres]
+user=sogo_ro
+password=agreatpassword
+dbName=sogo
