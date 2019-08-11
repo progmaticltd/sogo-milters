@@ -16,36 +16,24 @@
 # too many instance attributes: pylint: disable=R0902
 # parameters differ from overriden: pylint: disable=W0221
 
-# To test with sqlite, use:
-# sqlite3 -batch /var/lib/milter-abook/addresses.db
-# 'create table if not exists addresses (
-# uid        VARCHAR,
-# source     VARCHAR,
-# abook      VARCHAR,
-# email_hash VARCHAR
-# )';
-# sqlite3 -batch /var/lib/milter-abook/addresses.db
-# 'CREATE INDEX email_idx ON addresses (uid, email_hash)';
-
 # Make sure pylint knows about the print function
 from __future__ import print_function
-
-import Milter
-from Milter.utils import parse_addr
 
 import StringIO
 import sys
 import os
-import psycopg2
+
 import ConfigParser
 from socket import AF_INET6
-
-# For logging queue
 from multiprocessing import Process as Thread, Queue
+import psycopg2
+
+import Milter
+from Milter.utils import parse_addr
 
 # Constants related to the systemd service
-SOCKET_PATH = "/run/milter-abook/milter-abook.socket"
-PID_FILE_PATH = "/run/milter-abook/main.pid"
+SOCKET_PATH = "/var/spool/postfix/private/milter-sogo-abook.socket"
+PID_FILE_PATH = "/run/milter-sogo-abook/main.pid"
 
 GlobalLogQueue = Queue(maxsize=100) # type: Queue[str]
 
@@ -302,7 +290,7 @@ def main():
             pidFile.write(str(pid))
             pidFile.close()
 
-        print("Started address book search and tag milter (pid={}, debug={})".format(pid, debug))
+        print("Started SOGo address book search and tag milter (pid={}, debug={})".format(pid, debug))
         sys.stdout.flush()
 
         # Start the background thread
@@ -313,7 +301,7 @@ def main():
         lgThread.join()
 
         # Log the end of process
-        print("Stopped address book search and tag milter (pid={})".format(pid))
+        print("Stopped SOGo address book search and tag milter (pid={})".format(pid))
 
     except Exception as error:
         print("Exception when running the milter: {}".format(error.message))
